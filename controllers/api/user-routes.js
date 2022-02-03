@@ -80,6 +80,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+    // expects {email: 'melmel@yahoo.com', password: 'watermelon'}
     User.findOne({
         where: {
             email: req.body.email
@@ -90,12 +91,12 @@ router.post('/login', (req, res) => {
             return;
         }
 
-        // const validPassword = dbUserData.checkPassword(req.body.password);
+        const validPassword = dbUserData.checkPassword(req.body.password);
 
-        // if (!validPassword) {
-        //     res.status(400).json({ message: 'Incorrect password!' });
-        //     return;
-        // }
+        if (!validPassword) {
+            res.status(400).json({ message: 'Incorrect password!' });
+            return;
+        }
 
         req.session.save(() => {
             // declare session variables
@@ -126,6 +127,7 @@ router.put('/:id', (req, res) => {
     // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
     User.update(req.body, {
         where: {
+            individualHooks: true,
             id: req.params.id
         }
     })
